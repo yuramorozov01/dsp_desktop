@@ -1,8 +1,8 @@
+import sys
+
+import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSlot
-
-import sys
-import numpy as np
 
 from dsp_view import Ui_mw_dsp
 
@@ -15,8 +15,8 @@ class DspController(QtCore.QObject):
         self._apply_params()
 
     def _init_params(self):
-        self._window_width = 800
-        self._window_height = 600
+        self._window_width = 1280
+        self._window_height = 800
 
     def _init_ui_form(self):
         self._app = QtWidgets.QApplication(sys.argv)
