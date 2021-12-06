@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSlot
 
 from dsp_view import Ui_mw_dsp
+from widgets.tab_widget import OperationsTabWidget
 
 
 class DspController(QtCore.QObject):
@@ -12,6 +13,7 @@ class DspController(QtCore.QObject):
         super().__init__()
         self._init_params()
         self._init_ui_form()
+        self._init_tab_widget()
         self._apply_params()
 
     def _init_params(self):
@@ -23,6 +25,12 @@ class DspController(QtCore.QObject):
         self._form = QtWidgets.QMainWindow()
         self._ui = Ui_mw_dsp()
         self._ui.setupUi(self._form)
+        self._form.setFixedSize(self._window_width, self._window_height)
+
+    def _init_tab_widget(self):
+        tab_widget = OperationsTabWidget(self._form)
+        tab_widget.setFixedSize(self._window_width, self._window_height)
+        self._form.setCentralWidget(tab_widget)
 
     def _apply_params(self):
         self._form.setFixedSize(self._window_width, self._window_height)

@@ -26,4 +26,4 @@ class Ui_mw_dsp(object):
 
     def retranslateUi(self, mw_dsp):
         _translate = QtCore.QCoreApplication.translate
-        mw_dsp.setWindowTitle(_translate("mw_dsp", "MainWindow"))
+        mw_dsp.setWindowTitle(_translate("mw_dsp", "Digital signal processing"))
