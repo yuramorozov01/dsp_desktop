@@ -1,4 +1,9 @@
+import numpy as np
+import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+from widgets.utils import data_utils
+from widgets.utils.widgets_creator import WidgetsCreator
 
 
 class HarmonicSignalWidget(QtWidgets.QWidget):
@@ -7,54 +12,69 @@ class HarmonicSignalWidget(QtWidgets.QWidget):
         self.setWindowTitle(title)
         self.setFixedSize(parent.width(), parent.height())
 
+        self._widgets_creator = WidgetsCreator()
+
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(layout)
 
-        self._init_params()
         self._init_controls()
 
-    def _init_params(self):
-        self._lb_width = 80
-        self._lb_height = 30
-
-        self._le_width = 80
-        self._le_height = 20
-
-        self._pb_width = 100
-        self._pb_height = 30
-
-    def _create_label(self, title):
-        label = QtWidgets.QLabel()
-        label.setFixedSize(self._lb_width, self._lb_height)
-        label.setText(title)
-        return label
-
-    def _create_lineedit(self, text):
-        lineedit = QtWidgets.QLineEdit()
-        lineedit.setFixedSize(self._le_width, self._le_height)
-        lineedit.setText(text)
-        return lineedit
-
-    def _create_label_with_lineedit(self, title, text):
-        lb_amplitude = self._create_label(title)
-        le_amplitude = self._create_lineedit(text)
-        return lb_amplitude, le_amplitude
-
     def _init_controls(self):
-        h_layout = QtWidgets.QHBoxLayout()
-        h_layout.setAlignment(QtCore.Qt.AlignLeft)
-        tmp_widget = QtWidgets.QWidget()
-        tmp_widget.setLayout(h_layout)
+        self._lb_amplitude, self._le_amplitude, layout_widget = self._widgets_creator.create_label_with_lineedit(
+            'Amplitude',
+            '',
+            layout=True
+        )
+        self.layout().addWidget(layout_widget)
 
-        self._lb_amplitude, self._le_amplitude = self._create_label_with_lineedit('Amplitude', '')
-        h_layout.addWidget(self._lb_amplitude)
-        h_layout.addWidget(self._le_amplitude)
+        self._lb_frequency, self._le_frequency, layout_widget = self._widgets_creator.create_label_with_lineedit(
+            'Frequency',
+            '',
+            layout=True
+        )
+        self.layout().addWidget(layout_widget)
 
-        self.layout().addWidget(tmp_widget)
+        items = {
+            '0': 0,
+            'pi': np.pi,
+            '2 * pi': 2 * np.pi,
+            'pi / 2': np.pi / 2,
+            'pi / 3': np.pi / 3,
+            'pi / 4': np.pi / 4,
+            'pi / 5': np.pi / 5,
+            'pi / 6': np.pi / 6,
+            '2 * pi / 3': 2 * np.pi / 3,
+            '3 * pi / 4': 3 * np.pi / 4,
+        }
+        self._lb_initial_phases, self._cb_initial_phases, layout_widget = \
+            self._widgets_creator.create_label_with_combobox(
+                'Phase',
+                items,
+                layout=True
+            )
+        self.layout().addWidget(layout_widget)
 
-        self._pb_calculate = QtWidgets.QPushButton()
-        self._pb_calculate.setFixedSize(self._pb_width, self._pb_height)
-        self._pb_calculate.setText('Test')
+        self._pb_generate = self._widgets_creator.create_pushbutton('Generate', callback=self._pb_generate_on_click)
+        self.layout().addWidget(self._pb_generate)
 
-        self.layout().addWidget(self._pb_calculate)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+
+        self._pw_harmonic_signal, self._plot_harmonic_signal = self._widgets_creator.create_graphic(
+            np.arange(0, 1),
+            np.arange(0, 1),
+            width=800,
+            height=400
+        )
+        self.layout().addWidget(self._pw_harmonic_signal)
+
+        self.layout().addStretch()
+
+    def _pb_generate_on_click(self):
+        amplitude = data_utils.get_save_data_from_lineedit(self._le_amplitude, value_type=int)
+        frequency = data_utils.get_save_data_from_lineedit(self._le_frequency, value_type=int)
+        initial_phase = self._cb_initial_phases.itemData(self._cb_initial_phases.currentIndex())
+
+        time = np.arange(0, 1024, 1)
+        harmonic_values = amplitude * np.sin((2 * np.pi * frequency * time / len(time)) + initial_phase)
+        self._plot_harmonic_signal.setData(time, harmonic_values)
