@@ -2,8 +2,8 @@ import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from widgets.utils.widgets_creator import WidgetsCreator
 from widgets.utils import data_utils
+from widgets.utils.widgets_creator import WidgetsCreator
 
 
 class HarmonicSignalWidget(QtWidgets.QWidget):
@@ -58,14 +58,17 @@ class HarmonicSignalWidget(QtWidgets.QWidget):
         self._pb_generate = self._widgets_creator.create_pushbutton('Generate', callback=self._pb_generate_on_click)
         self.layout().addWidget(self._pb_generate)
 
-        self.layout().setContentsMargins(0, 0, 0, 200)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         self._pw_harmonic_signal, self._plot_harmonic_signal = self._widgets_creator.create_graphic(
             np.arange(0, 1),
-            np.arange(0, 1)
+            np.arange(0, 1),
+            width=800,
+            height=400
         )
         self.layout().addWidget(self._pw_harmonic_signal)
 
+        self.layout().addStretch()
 
     def _pb_generate_on_click(self):
         amplitude = data_utils.get_save_data_from_lineedit(self._le_amplitude, value_type=int)

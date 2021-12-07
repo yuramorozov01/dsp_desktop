@@ -40,7 +40,7 @@ class WidgetsCreator:
             widget = lambda_widget_creator()
             if layout:
                 h_layout = QtWidgets.QHBoxLayout()
-                h_layout.setAlignment(QtCore.Qt.AlignLeft)
+                h_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
                 layout_widget = QtWidgets.QWidget()
                 layout_widget.setLayout(h_layout)
                 h_layout.addWidget(label)
@@ -79,7 +79,9 @@ class WidgetsCreator:
         )
         return label, combobox, layout_widget
 
-    def create_graphic(self, x, y):
+    def create_graphic(self, x, y, width=600, height=200):
         plot_widget = pg.PlotWidget()
         plot = plot_widget.plot(x, y)
+        plot_widget.setMaximumWidth(width)
+        plot_widget.setMaximumHeight(height)
         return plot_widget, plot
