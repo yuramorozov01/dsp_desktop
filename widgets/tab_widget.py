@@ -1,7 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from widgets.harmonic_signal_widget.harmonic_signal_widget import HarmonicSignalWidget
-from widgets.fourier_transform_widget.fourier_transform_widget import FourierTransformWidget
+from widgets.fourier_transform_widget.fourier_transform_widget import \
+    FourierTransformWidget
+from widgets.harmonic_signal_widget.harmonic_signal_widget import \
+    HarmonicSignalWidget
 
 
 class OperationsTabWidget(QtWidgets.QTabWidget):
