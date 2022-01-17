@@ -16,19 +16,12 @@ class FourierTransformWidget(QtWidgets.QWidget):
 
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
+        layout.setContentsMargins(0, 0, 0, 25)
         self.setLayout(layout)
 
         self._init_controls()
 
     def _init_controls(self):
-        self._lb_amount_of_signals, self._le_amount_of_signals, tmp_widget = \
-            self._widgets_creator.create_label_with_lineedit(
-                'Signals',
-                '',
-                layout=True
-            )
-        self.layout().addWidget(tmp_widget)
-
         self._lb_amplitudes, self._le_amplitudes, tmp_widget = self._widgets_creator.create_label_with_lineedit(
             'Amplitudes',
             '',
@@ -46,31 +39,82 @@ class FourierTransformWidget(QtWidgets.QWidget):
         self._pb_generate = self._widgets_creator.create_pushbutton('Generate', callback=self._pb_generate_on_click)
         self.layout().addWidget(self._pb_generate)
 
-        self.layout().setContentsMargins(0, 0, 0, 200)
+        self._sa_harmonics = self._widgets_creator.create_scroll_area(None)
+        self.layout().addWidget(self._sa_harmonics)
 
         self._pw_polyharmonic_signal, self._plot_polyharmonic_signal = self._widgets_creator.create_graphic(
             np.arange(0, 1),
             np.arange(0, 1)
         )
-        self.layout().addWidget(self._pw_polyharmonic_signal)
+
+        self._pw_frequency_spectre_signal, self._plot_frequency_spectre_signal = self._widgets_creator.create_graphic(
+            np.arange(0, 1),
+            np.arange(0, 1)
+        )
+
+        layout_widget = self._widgets_creator.combine_widgets_to_layout(
+            self._pw_polyharmonic_signal,
+            self._pw_frequency_spectre_signal
+        )
+        self.layout().addWidget(layout_widget)
 
         self.layout().addStretch()
 
-    def _pb_generate_on_click(self):
-        amount_of_signals = data_utils.get_save_data_from_lineedit(self._le_amount_of_signals, value_type=int)
-        amplitudes = data_utils.get_save_data_array_from_lineedit(self._le_amplitudes, value_type=int)
-        frequencies = data_utils.get_save_data_array_from_lineedit(self._le_frequencies, value_type=int)
-
-        time = np.arange(0, 1024, 1)
-        harmonics_values = []
-        for i in range(amount_of_signals):
-            harmonics_values.append(amplitudes[i] * np.sin(2 * np.pi * frequencies[i] * time / len(time)))
-
-        result_values = []
+    def _update_generated_polyharmonic_signal(self, time, result_values, check_boxes):
+        new_values = []
+        for i, check_box in enumerate(check_boxes):
+            if check_box.checkState():
+                new_values.append(result_values[i])
+        new_result_values = []
         for j in time:
             res = 0
-            for harmonic_values in harmonics_values:
+            for harmonic_values in new_values:
                 res += harmonic_values[j]
-            result_values.append(res)
+            new_result_values.append(res)
+        self._plot_polyharmonic_signal.setData(time, new_result_values)
 
+    def _pb_generate_on_click(self):
+        amplitudes = data_utils.get_save_data_array_from_lineedit(self._le_amplitudes, value_type=int)
+        frequencies = data_utils.get_save_data_array_from_lineedit(self._le_frequencies, value_type=int)
+        amplitudes, frequencies = data_utils.equalize_length_of_arrays(0, amplitudes, frequencies)
+
+        time_size = 1024
+
+        # fix for Nyquist–Shannon sampling theorem
+        if max(frequencies) >= (time_size // 2):
+            time_size = (max(frequencies) + 1) * 2
+
+        time, result_values = data_utils.generate_polyharmonic_signal(time_size, amplitudes, frequencies)
         self._plot_polyharmonic_signal.setData(time, result_values)
+
+        fft_values = np.fft.fft(result_values)
+        int_fft_values = abs(fft_values)
+        self._plot_frequency_spectre_signal.setData(time[:(len(time) // 2)], int_fft_values[:(len(time) // 2)])
+
+        # check_boxes = []
+        # tmp_widget = QtWidgets.QWidget()
+        # layout = QtWidgets.QVBoxLayout()
+        # layout.setAlignment(QtCore.Qt.AlignTop)
+        # tmp_widget.setLayout(layout)
+        # for harmonic_values in harmonics_values:
+        #     h_layout = QtWidgets.QHBoxLayout()
+        #     h_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        #     layout_widget = QtWidgets.QWidget()
+        #     layout_widget.setLayout(h_layout)
+        #     plot_widget, plot = self._widgets_creator.create_graphic(
+        #         time,
+        #         harmonic_values
+        #     )
+        #     h_layout.addWidget(plot_widget)
+        #
+        #     check_box = QtWidgets.QCheckBox()
+        #     check_box.setChecked(True)
+        #     check_boxes.append(check_box)
+        #     check_box.toggled.connect(
+        #         lambda: self._update_generated_polyharmonic_signal(time, harmonics_values, check_boxes)
+        #     )
+        #     h_layout.addWidget(check_box)
+        #
+        #     layout.addWidget(layout_widget)
+        #
+        # self._sa_harmonics.setWidget(tmp_widget)
