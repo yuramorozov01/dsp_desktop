@@ -1,11 +1,9 @@
 import sys
 
-import numpy as np
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot
+from PyQt5 import QtCore, QtWidgets
 
 from dsp_view import Ui_mw_dsp
-from widgets.tab_widget import OperationsTabWidget
+from widgets import OperationsTabWidget
 
 
 class DspController(QtCore.QObject):

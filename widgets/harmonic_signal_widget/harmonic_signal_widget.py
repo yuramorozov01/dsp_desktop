@@ -1,9 +1,8 @@
 import numpy as np
-import pyqtgraph as pg
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
-from widgets.utils import data_utils
-from widgets.utils.widgets_creator import WidgetsCreator
+from widgets.utils import WidgetsCreator
+from widgets.utils import data_utils as utils
 
 
 class HarmonicSignalWidget(QtWidgets.QWidget):
@@ -71,8 +70,8 @@ class HarmonicSignalWidget(QtWidgets.QWidget):
         self.layout().addStretch()
 
     def _pb_generate_on_click(self):
-        amplitude = data_utils.get_save_data_from_lineedit(self._le_amplitude, value_type=int)
-        frequency = data_utils.get_save_data_from_lineedit(self._le_frequency, value_type=int)
+        amplitude = utils.get_save_data_from_lineedit(self._le_amplitude, value_type=int)
+        frequency = utils.get_save_data_from_lineedit(self._le_frequency, value_type=int)
         initial_phase = self._cb_initial_phases.itemData(self._cb_initial_phases.currentIndex())
 
         time = np.arange(0, 1024, 1)

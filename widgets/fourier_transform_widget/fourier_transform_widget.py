@@ -1,9 +1,8 @@
 import numpy as np
-import pyqtgraph as pg
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
-from widgets.utils import data_utils
-from widgets.utils.widgets_creator import WidgetsCreator
+from widgets.utils import WidgetsCreator
+from widgets.utils import data_utils as utils
 
 
 class FourierTransformWidget(QtWidgets.QWidget):
@@ -74,9 +73,9 @@ class FourierTransformWidget(QtWidgets.QWidget):
         self._plot_polyharmonic_signal.setData(time, new_result_values)
 
     def _pb_generate_on_click(self):
-        amplitudes = data_utils.get_save_data_array_from_lineedit(self._le_amplitudes, value_type=int)
-        frequencies = data_utils.get_save_data_array_from_lineedit(self._le_frequencies, value_type=int)
-        amplitudes, frequencies = data_utils.equalize_length_of_arrays(0, amplitudes, frequencies)
+        amplitudes = utils.get_save_data_array_from_lineedit(self._le_amplitudes, value_type=int)
+        frequencies = utils.get_save_data_array_from_lineedit(self._le_frequencies, value_type=int)
+        amplitudes, frequencies = utils.equalize_length_of_arrays(0, amplitudes, frequencies)
 
         time_size = 1024
 
@@ -84,7 +83,7 @@ class FourierTransformWidget(QtWidgets.QWidget):
         if max(frequencies) >= (time_size // 2):
             time_size = (max(frequencies) + 1) * 2
 
-        time, result_values, harmonics_values = data_utils.generate_polyharmonic_signal(time_size, amplitudes, frequencies)
+        time, result_values, harmonics_values = utils.generate_polyharmonic_signal(time_size, amplitudes, frequencies)
         self._plot_polyharmonic_signal.setData(time, result_values)
 
         fft_values = np.fft.fft(result_values)

@@ -1,6 +1,5 @@
-import numpy as np
 import pyqtgraph as pg
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 
 class WidgetsCreator:
@@ -108,4 +107,3 @@ class WidgetsCreator:
         for widget in widgets:
             layout.addWidget(widget)
         return layout_widget
-
