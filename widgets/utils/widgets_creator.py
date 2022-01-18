@@ -1,6 +1,5 @@
-import numpy as np
 import pyqtgraph as pg
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 
 class WidgetsCreator:
@@ -11,7 +10,7 @@ class WidgetsCreator:
         self._lb_width = 80
         self._lb_height = 30
 
-        self._le_width = 80
+        self._le_width = 120
         self._le_height = 20
 
         self._pb_width = 100
@@ -32,24 +31,25 @@ class WidgetsCreator:
         lineedit.setText(text)
         return lineedit
 
-    def create_label_with_widget(self, title, lambda_widget_creator=None, layout=False):
+    def create_checkbox(self, callback=None):
+        checkbox = QtWidgets.QCheckBox()
+        checkbox.setChecked(True)
+        if callback is not None:
+            checkbox.toggled.connect(callback)
+        return checkbox
+
+    def _create_label_with_widget(self, title, lambda_widget_creator=None, layout=False):
         label = self.create_label(title)
         widget = None
         layout_widget = None
         if lambda_widget_creator is not None:
             widget = lambda_widget_creator()
             if layout:
-                h_layout = QtWidgets.QHBoxLayout()
-                h_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-                layout_widget = QtWidgets.QWidget()
-                layout_widget.setLayout(h_layout)
-                h_layout.addWidget(label)
-                h_layout.addWidget(widget)
-                h_layout.setContentsMargins(0, 0, 0, 0)
+                layout_widget = self.combine_widgets_to_layout(label, widget)
         return label, widget, layout_widget
 
     def create_label_with_lineedit(self, title, text, layout=False):
-        label, lineedit, layout_widget = self.create_label_with_widget(
+        label, lineedit, layout_widget = self._create_label_with_widget(
             title,
             lambda_widget_creator=lambda: self.create_lineedit(text),
             layout=layout
@@ -72,7 +72,7 @@ class WidgetsCreator:
         return combobox
 
     def create_label_with_combobox(self, title, items, layout=False):
-        label, combobox, layout_widget = self.create_label_with_widget(
+        label, combobox, layout_widget = self._create_label_with_widget(
             title,
             lambda_widget_creator=lambda: self.create_combobox(items),
             layout=layout
@@ -84,4 +84,26 @@ class WidgetsCreator:
         plot = plot_widget.plot(x, y)
         plot_widget.setMaximumWidth(width)
         plot_widget.setMaximumHeight(height)
+        plot_widget.setMinimumWidth(width)
+        plot_widget.setMinimumHeight(height)
         return plot_widget, plot
+
+    def create_scroll_area(self, inner_widget, width=900, height=400):
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setAlignment(QtCore.Qt.AlignTop)
+        scroll_area.setMaximumWidth(width)
+        scroll_area.setMaximumHeight(height)
+        scroll_area.setMinimumWidth(width)
+        scroll_area.setMinimumHeight(height)
+        scroll_area.setWidget(inner_widget)
+        return scroll_area
+
+    def combine_widgets_to_layout(self, *widgets, layout=QtWidgets.QHBoxLayout):
+        layout = layout()
+        layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout_widget = QtWidgets.QWidget()
+        layout_widget.setLayout(layout)
+        for widget in widgets:
+            layout.addWidget(widget)
+        return layout_widget
