@@ -36,4 +36,4 @@ def generate_polyharmonic_signal(amount_of_points, amplitudes, frequencies):
             res += harmonic_values[j]
         result_values.append(res)
 
-    return time, result_values
+    return time, result_values, harmonics_values

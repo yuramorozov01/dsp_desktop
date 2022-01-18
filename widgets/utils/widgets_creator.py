@@ -32,6 +32,13 @@ class WidgetsCreator:
         lineedit.setText(text)
         return lineedit
 
+    def create_checkbox(self, callback=None):
+        checkbox = QtWidgets.QCheckBox()
+        checkbox.setChecked(True)
+        if callback is not None:
+            checkbox.toggled.connect(callback)
+        return checkbox
+
     def _create_label_with_widget(self, title, lambda_widget_creator=None, layout=False):
         label = self.create_label(title)
         widget = None

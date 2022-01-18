@@ -84,37 +84,29 @@ class FourierTransformWidget(QtWidgets.QWidget):
         if max(frequencies) >= (time_size // 2):
             time_size = (max(frequencies) + 1) * 2
 
-        time, result_values = data_utils.generate_polyharmonic_signal(time_size, amplitudes, frequencies)
+        time, result_values, harmonics_values = data_utils.generate_polyharmonic_signal(time_size, amplitudes, frequencies)
         self._plot_polyharmonic_signal.setData(time, result_values)
 
         fft_values = np.fft.fft(result_values)
         int_fft_values = abs(fft_values)
         self._plot_frequency_spectre_signal.setData(time[:(len(time) // 2)], int_fft_values[:(len(time) // 2)])
 
-        # check_boxes = []
-        # tmp_widget = QtWidgets.QWidget()
-        # layout = QtWidgets.QVBoxLayout()
-        # layout.setAlignment(QtCore.Qt.AlignTop)
-        # tmp_widget.setLayout(layout)
-        # for harmonic_values in harmonics_values:
-        #     h_layout = QtWidgets.QHBoxLayout()
-        #     h_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        #     layout_widget = QtWidgets.QWidget()
-        #     layout_widget.setLayout(h_layout)
-        #     plot_widget, plot = self._widgets_creator.create_graphic(
-        #         time,
-        #         harmonic_values
-        #     )
-        #     h_layout.addWidget(plot_widget)
-        #
-        #     check_box = QtWidgets.QCheckBox()
-        #     check_box.setChecked(True)
-        #     check_boxes.append(check_box)
-        #     check_box.toggled.connect(
-        #         lambda: self._update_generated_polyharmonic_signal(time, harmonics_values, check_boxes)
-        #     )
-        #     h_layout.addWidget(check_box)
-        #
-        #     layout.addWidget(layout_widget)
-        #
-        # self._sa_harmonics.setWidget(tmp_widget)
+        check_boxes = []
+        combined_layout_widgets = []
+        for harmonic_values in harmonics_values:
+            plot_widget, plot = self._widgets_creator.create_graphic(
+                time,
+                harmonic_values
+            )
+            checkbox = self._widgets_creator.create_checkbox(
+                lambda: self._update_generated_polyharmonic_signal(time, harmonics_values, check_boxes)
+            )
+            check_boxes.append(checkbox)
+            combined_layout_widget = self._widgets_creator.combine_widgets_to_layout(plot_widget, checkbox)
+            combined_layout_widgets.append(combined_layout_widget)
+
+        all_plots_with_checkboxes_vertical_layout = self._widgets_creator.combine_widgets_to_layout(
+            *combined_layout_widgets,
+            layout=QtWidgets.QVBoxLayout
+        )
+        self._sa_harmonics.setWidget(all_plots_with_checkboxes_vertical_layout)
