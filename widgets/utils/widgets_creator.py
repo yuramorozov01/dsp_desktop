@@ -1,6 +1,8 @@
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtWidgets
 
+import numpy as np
+
 
 class WidgetsCreator:
     def __init__(self):
@@ -106,4 +108,46 @@ class WidgetsCreator:
         layout_widget.setLayout(layout)
         for widget in widgets:
             layout.addWidget(widget)
+        layout.addStretch()
         return layout_widget
+
+    def create_signal_widget_generator_layout(self, generate_callback_func=None):
+        lb_amplitudes_signal, \
+        le_amplitudes_signal, \
+        amplitudes_widget_signal = self.create_label_with_lineedit(
+            'Amplitudes',
+            '',
+            layout=True
+        )
+
+        lb_frequencies_signal, \
+        le_frequencies_signal, \
+        frequencies_widget_signal = self.create_label_with_lineedit(
+            'Frequencies',
+            '',
+            layout=True
+        )
+
+        pw_polyharmonic_signal, plot_polyharmonic_signal = self.create_graphic(
+            np.arange(0, 1),
+            np.arange(0, 1)
+        )
+
+        pb_generate = self.create_pushbutton(
+            'Generate',
+            callback=lambda: generate_callback_func(
+                le_amplitudes_signal,
+                le_frequencies_signal,
+                plot_polyharmonic_signal
+            )
+        )
+
+        signal_generator_layout = self.combine_widgets_to_layout(
+            amplitudes_widget_signal,
+            frequencies_widget_signal,
+            pb_generate,
+            pw_polyharmonic_signal,
+            layout=QtWidgets.QVBoxLayout
+        )
+
+        return signal_generator_layout
