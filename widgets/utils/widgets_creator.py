@@ -100,6 +100,15 @@ class WidgetsCreator:
         scroll_area.setWidget(inner_widget)
         return scroll_area
 
+    def create_slider(self, range_value, value_changed_callback=None):
+        slider = QtWidgets.QSlider()
+        slider.setRange(range_value[0], range_value[1])
+        slider.setValue(range_value[0])
+        slider.setOrientation(QtCore.Qt.Horizontal)
+        if value_changed_callback is not None:
+            slider.valueChanged.connect(value_changed_callback)
+        return slider
+
     def combine_widgets_to_layout(self, *widgets, layout=QtWidgets.QHBoxLayout):
         layout = layout()
         layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
