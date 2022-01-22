@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5 import QtCore, QtWidgets
 import scipy.signal
+from PyQt5 import QtCore, QtWidgets
 
 from widgets.utils import WidgetsCreator
 from widgets.utils import data_utils as utils
@@ -77,7 +77,11 @@ class CorrelationWidget(QtWidgets.QWidget):
         frequencies = utils.get_save_data_array_from_lineedit(src_frequencies, value_type=int)
         amplitudes, frequencies = utils.equalize_length_of_arrays(0, amplitudes, frequencies)
 
-        time, result_values, harmonics_values = utils.generate_polyharmonic_signal(self._signal_size, amplitudes, frequencies)
+        time, result_values, harmonics_values = utils.generate_polyharmonic_signal(
+            self._signal_size,
+            amplitudes,
+            frequencies
+        )
         plot.setData(time, result_values)
 
         if cache is not None:

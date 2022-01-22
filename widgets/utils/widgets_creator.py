@@ -1,7 +1,6 @@
+import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtWidgets
-
-import numpy as np
 
 
 class WidgetsCreator:
@@ -121,17 +120,13 @@ class WidgetsCreator:
         return layout_widget
 
     def create_signal_widget_generator_layout(self, generate_callback_func=None):
-        lb_amplitudes_signal, \
-        le_amplitudes_signal, \
-        amplitudes_widget_signal = self.create_label_with_lineedit(
+        lb_amplitudes_signal, le_amplitudes_signal, amplitudes_widget_signal = self.create_label_with_lineedit(
             'Amplitudes',
             '',
             layout=True
         )
 
-        lb_frequencies_signal, \
-        le_frequencies_signal, \
-        frequencies_widget_signal = self.create_label_with_lineedit(
+        lb_frequencies_signal, le_frequencies_signal, frequencies_widget_signal = self.create_label_with_lineedit(
             'Frequencies',
             '',
             layout=True

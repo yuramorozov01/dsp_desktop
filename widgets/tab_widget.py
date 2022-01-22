@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets
 
+from widgets.correlation_widget import CorrelationWidget
 from widgets.fourier_transform_widget import FourierTransformWidget
 from widgets.harmonic_signal_widget import HarmonicSignalWidget
-from widgets.correlation_widget import CorrelationWidget
 
 
 class OperationsTabWidget(QtWidgets.QTabWidget):
