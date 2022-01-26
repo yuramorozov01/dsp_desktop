@@ -132,6 +132,12 @@ class WidgetsCreator:
             layout=True
         )
 
+        lb_amount_of_points, le_amount_of_points, amount_of_points_widget = self.create_label_with_lineedit(
+            'Points',
+            '',
+            layout=True
+        )
+
         pw_polyharmonic_signal, plot_polyharmonic_signal = self.create_graphic(
             np.arange(0, 1),
             np.arange(0, 1)
@@ -142,6 +148,7 @@ class WidgetsCreator:
             callback=lambda: generate_callback_func(
                 le_amplitudes_signal,
                 le_frequencies_signal,
+                le_amount_of_points,
                 plot_polyharmonic_signal
             )
         )
@@ -149,6 +156,7 @@ class WidgetsCreator:
         signal_generator_layout = self.combine_widgets_to_layout(
             amplitudes_widget_signal,
             frequencies_widget_signal,
+            amount_of_points_widget,
             pb_generate,
             pw_polyharmonic_signal,
             layout=QtWidgets.QVBoxLayout
