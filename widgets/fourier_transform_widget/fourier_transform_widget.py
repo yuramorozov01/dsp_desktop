@@ -24,14 +24,14 @@ class FourierTransformWidget(QtWidgets.QWidget):
         self._lb_amplitudes, self._le_amplitudes, tmp_widget = self._widgets_creator.create_label_with_lineedit(
             'Amplitudes',
             '',
-            layout=True
+            layout='h'
         )
         self.layout().addWidget(tmp_widget)
 
         self._lb_frequencies, self._le_frequencies, tmp_widget = self._widgets_creator.create_label_with_lineedit(
             'Frequencies',
             '',
-            layout=True
+            layout='h'
         )
         self.layout().addWidget(tmp_widget)
 

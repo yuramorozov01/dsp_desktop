@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
 
 from widgets.correlation_widget import CorrelationWidget
+from widgets.image_correlation_widget import ImageCorrelationWidget
 from widgets.fourier_transform_widget import FourierTransformWidget
 from widgets.harmonic_signal_widget import HarmonicSignalWidget
 
@@ -17,6 +18,7 @@ class OperationsTabWidget(QtWidgets.QTabWidget):
             'Harmonic signal': HarmonicSignalWidget,
             'Fourier transform': FourierTransformWidget,
             'Correlation': CorrelationWidget,
+            'Image correlation': ImageCorrelationWidget,
         }
         for title, widget in child_tab_widgets.items():
             widget_inst = widget(self, title)

@@ -23,14 +23,14 @@ class HarmonicSignalWidget(QtWidgets.QWidget):
         self._lb_amplitude, self._le_amplitude, layout_widget = self._widgets_creator.create_label_with_lineedit(
             'Amplitude',
             '',
-            layout=True
+            layout='h'
         )
         self.layout().addWidget(layout_widget)
 
         self._lb_frequency, self._le_frequency, layout_widget = self._widgets_creator.create_label_with_lineedit(
             'Frequency',
             '',
-            layout=True
+            layout='h'
         )
         self.layout().addWidget(layout_widget)
 
@@ -50,7 +50,7 @@ class HarmonicSignalWidget(QtWidgets.QWidget):
             self._widgets_creator.create_label_with_combobox(
                 'Phase',
                 items,
-                layout=True
+                layout='h'
             )
         self.layout().addWidget(layout_widget)
 

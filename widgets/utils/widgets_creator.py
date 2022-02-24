@@ -20,9 +20,9 @@ class WidgetsCreator:
         self._cb_width = 100
         self._cb_height = 30
 
-    def create_label(self, title):
+    def create_label(self, title, width=None, height=None):
         label = QtWidgets.QLabel()
-        label.setFixedSize(self._lb_width, self._lb_height)
+        label.setFixedSize(width or self._lb_width, height or self._lb_height)
         label.setText(title)
         return label
 
@@ -39,17 +39,17 @@ class WidgetsCreator:
             checkbox.toggled.connect(callback)
         return checkbox
 
-    def _create_label_with_widget(self, title, lambda_widget_creator=None, layout=False):
+    def _create_label_with_widget(self, title, lambda_widget_creator=None, layout=None):
         label = self.create_label(title)
         widget = None
         layout_widget = None
         if lambda_widget_creator is not None:
             widget = lambda_widget_creator()
-            if layout:
-                layout_widget = self.combine_widgets_to_layout(label, widget)
+            if layout is not None:
+                layout_widget = self.combine_widgets_to_layout(label, widget, layout=layout)
         return label, widget, layout_widget
 
-    def create_label_with_lineedit(self, title, text, layout=False):
+    def create_label_with_lineedit(self, title, text, layout='h'):
         label, lineedit, layout_widget = self._create_label_with_widget(
             title,
             lambda_widget_creator=lambda: self.create_lineedit(text),
@@ -72,13 +72,21 @@ class WidgetsCreator:
             combobox.addItem(title, userData=value)
         return combobox
 
-    def create_label_with_combobox(self, title, items, layout=False):
+    def create_label_with_combobox(self, title, items, layout='h'):
         label, combobox, layout_widget = self._create_label_with_widget(
             title,
             lambda_widget_creator=lambda: self.create_combobox(items),
             layout=layout
         )
         return label, combobox, layout_widget
+
+    def create_label_with_pushbutton(self, title, text, callback=None, layout=None):
+        label, pushbutton, layout_widget = self._create_label_with_widget(
+            title,
+            lambda_widget_creator=lambda: self.create_pushbutton(text, callback=callback),
+            layout=layout
+        )
+        return label, pushbutton, layout_widget
 
     def create_graphic(self, x, y, width=600, height=200):
         plot_widget = pg.PlotWidget()
@@ -108,7 +116,12 @@ class WidgetsCreator:
             slider.valueChanged.connect(value_changed_callback)
         return slider
 
-    def combine_widgets_to_layout(self, *widgets, layout=QtWidgets.QHBoxLayout):
+    def combine_widgets_to_layout(self, *widgets, layout='h'):
+        layouts = {
+            'h': QtWidgets.QHBoxLayout,
+            'v': QtWidgets.QVBoxLayout,
+        }
+        layout = layouts.get(layout)
         layout = layout()
         layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -123,19 +136,19 @@ class WidgetsCreator:
         lb_amplitudes_signal, le_amplitudes_signal, amplitudes_widget_signal = self.create_label_with_lineedit(
             'Amplitudes',
             '',
-            layout=True
+            layout='h'
         )
 
         lb_frequencies_signal, le_frequencies_signal, frequencies_widget_signal = self.create_label_with_lineedit(
             'Frequencies',
             '',
-            layout=True
+            layout='h'
         )
 
         lb_amount_of_points, le_amount_of_points, amount_of_points_widget = self.create_label_with_lineedit(
             'Points',
             '',
-            layout=True
+            layout='h'
         )
 
         pw_polyharmonic_signal, plot_polyharmonic_signal = self.create_graphic(
@@ -159,7 +172,7 @@ class WidgetsCreator:
             amount_of_points_widget,
             pb_generate,
             pw_polyharmonic_signal,
-            layout=QtWidgets.QVBoxLayout
+            layout='v'
         )
 
         return signal_generator_layout
