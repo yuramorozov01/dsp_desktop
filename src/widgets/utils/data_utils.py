@@ -1,6 +1,8 @@
 from itertools import zip_longest
 
 import numpy as np
+import scipy.signal
+import cv2
 
 
 def get_save_data_from_lineedit(lineedit, value_type=int):
@@ -38,3 +40,35 @@ def generate_polyharmonic_signal(amount_of_points, amplitudes, frequencies):
         result_values.append(res)
 
     return time, result_values, harmonics_values
+
+
+def normxcorr2(template, image, mode="full"):
+    if np.ndim(template) > np.ndim(image) or \
+            len([i for i in range(np.ndim(template)) if template.shape[i] > image.shape[i]]) > 0:
+        print("normxcorr2: TEMPLATE larger than IMG. Arguments may be swapped.")
+
+    template = template - np.mean(template)
+    image = image - np.mean(image)
+
+    a1 = np.ones(template.shape)
+
+    ar = np.flipud(np.fliplr(template))
+    out = scipy.signal.fftconvolve(image, ar.conj(), mode=mode)
+
+    image = scipy.signal.fftconvolve(np.square(image), a1, mode=mode) - \
+        np.square(scipy.signal.fftconvolve(image, a1, mode=mode)) / (np.prod(template.shape))
+
+    image[np.where(image < 0)] = 0
+
+    template = np.sum(np.square(template))
+    out = out / np.sqrt(image * template)
+
+    out[np.where(np.logical_not(np.isfinite(out)))] = 0
+
+    return out
+
+
+def normalize_image(image):
+    normalized = cv2.normalize(image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+    normalized = normalized.astype(np.uint8)
+    return normalized
