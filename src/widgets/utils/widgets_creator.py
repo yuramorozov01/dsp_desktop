@@ -1,6 +1,7 @@
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtCore, QtWidgets
+from widgets.utils.figure_canvas import FigureCanvas
 
 
 class WidgetsCreator:
@@ -176,3 +177,7 @@ class WidgetsCreator:
         )
 
         return signal_generator_layout
+
+    def create_figure_canvas(self):
+        figure_canvas = FigureCanvas()
+        return figure_canvas

@@ -27,7 +27,7 @@ class ImageCorrelationWidget(QtWidgets.QWidget):
         self._init_controls()
 
     def _init_controls(self):
-        lb_image_1 = self._widgets_creator.create_label('', width=250, height=350)
+        lb_image_1 = self._widgets_creator.create_label('', width=250, height=300)
         lb_open_image_1, pb_open_image_1, tmp_widget_image_1 = \
             self._widgets_creator.create_label_with_pushbutton(
                 'Image 1',
@@ -41,7 +41,7 @@ class ImageCorrelationWidget(QtWidgets.QWidget):
             layout='v'
         )
 
-        lb_image_2 = self._widgets_creator.create_label('', width=250, height=350)
+        lb_image_2 = self._widgets_creator.create_label('', width=250, height=300)
         lb_open_image_2, pb_open_image_2, tmp_widget_image_2 = \
             self._widgets_creator.create_label_with_pushbutton(
                 'Image 2',
@@ -61,24 +61,32 @@ class ImageCorrelationWidget(QtWidgets.QWidget):
             layout='h'
         )
 
-        lb_image_corr_res = self._widgets_creator.create_label('', width=250, height=350)
-        lb_found_image_part = self._widgets_creator.create_label('', width=250, height=350)
+        lb_image_corr_res = self._widgets_creator.create_label('', width=250, height=300)
+        lb_found_image_part = self._widgets_creator.create_label('', width=250, height=300)
 
         images_res = self._widgets_creator.combine_widgets_to_layout(
             lb_image_corr_res,
             lb_found_image_part
         )
 
+        figure_canvas = self._widgets_creator.create_figure_canvas()
+
         lb_correlate, pb_correlate, tmp_widget_corr_res = \
             self._widgets_creator.create_label_with_pushbutton(
                 'Correlation',
                 'Correlate',
-                callback=lambda: self._pb_correlate_on_click(self._corr_res, lb_image_corr_res, lb_found_image_part),
+                callback=lambda: self._pb_correlate_on_click(
+                    self._corr_res,
+                    lb_image_corr_res,
+                    lb_found_image_part,
+                    figure_canvas
+                ),
                 layout='h',
             )
         image_corr_res = self._widgets_creator.combine_widgets_to_layout(
             tmp_widget_corr_res,
             images_res,
+            figure_canvas,
             layout='v'
         )
 
@@ -130,7 +138,7 @@ class ImageCorrelationWidget(QtWidgets.QWidget):
             array_to_load_image += list(loaded_image)
             self._lb_image_set_image(label, loaded_image)
 
-    def _pb_correlate_on_click(self, array_to_save_image, label_for_image, label_for_found_image):
+    def _pb_correlate_on_click(self, array_to_save_image, label_for_image, label_for_found_image, figure_canvas):
         im_1_copy_np = np.array(self._source_image_1.copy())
         im_2_copy_np = np.array(self._source_image_2.copy())
 
@@ -157,3 +165,5 @@ class ImageCorrelationWidget(QtWidgets.QWidget):
         cv2.rectangle(res_copy, top_left, bottom_right, (255, 0, 0), 10)
 
         self._lb_image_set_image(label_for_found_image, res_copy)
+
+        figure_canvas.plot(corr_res)
